@@ -95,15 +95,76 @@ const spin = ()=>{
     return reels;
 };
 
+const transpose = (reels)=>{
+    const rows = [];
+
+    for (let i=0;i<ROWS;i++){
+        rows.push([]);
+        for(let j = 0;j< COLS;j++){
+            rows[i].push(reels[j][i]);
+        }
+    }
+    return rows;
+};
+
+const  printRows = (rows)=>{
+    for(const row of rows){
+        let rowString  = "";
+        for(const [i,symbol] of row.entries()){
+            rowString+=symbol;
+            if(i!=row.length - 1){
+                rowString+= " | "
+            }
+        }
+        console.log(rowString);
+    }
+};
+
+const getWinnings = (rows,bet,lines)=>{
+    let winnings = 0;
+    for(let row = 0;row<lines;row++){
+        const symbols = rows[row];
+        let allSame = true;
+
+        for(const symbol of symbols){
+            if(symbol != symbols[0]){
+                allSame = false;
+                break;
+            }
+        }
+    }
+    return winnings;
+};
 
 
-let balance = deposit();
-// console.log(balance);
-const numberOflines = getNumberOfLines();
-// console.log(numberOflines);
-const bet = getBet(balance,numberOflines);
-// console.log(bet);
 
-const reels = spin();
-// console.log(reels);
+const game = ()=>{
+    let balance = deposit();
+    // console.log(balance);
+    while(true){
+        console.log("You have a balance of $"+balance);
+        const numberOflines = getNumberOfLines();
+        // console.log(numberOflines);
+            const bet = getBet(balance,numberOflines);
+            // console.log(bet);
+            balance -= bet * numberOflines;
+        const reels = spin();
+        const rows = transpose(reels);
+        printRows(rows);
 
+        const winnings = getWinnings(rows,bet,numberOflines);
+        balance += winnings;
+        console.log("you won,$ " + winnings.toString());
+        if(balance<=0){
+            console.log("You ran out of money!");
+            break;
+        }
+        const playAgain = 
+        prompt("Do you want to play again (y/n)?");
+        if(playAgain!="y"){
+            break;
+        }
+    }
+    
+};
+game();
